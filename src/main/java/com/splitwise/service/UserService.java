@@ -1,11 +1,13 @@
 package com.splitwise.service;
 
+import com.splitwise.dto.response.ApiResponse;
 import com.splitwise.entity.User;
 
-import java.util.List;
+import java.util.UUID;
 
 public interface UserService {
-    String addUser(User user);
+    ApiResponse<Object> createUser(User user);
 
-    List<User> getAllUsers();
+    ApiResponse<Object> getAllUsers();
+    ApiResponse<Object> findUserById(UUID id);
 }

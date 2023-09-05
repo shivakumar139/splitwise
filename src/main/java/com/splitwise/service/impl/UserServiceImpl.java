@@ -1,17 +1,18 @@
 package com.splitwise.service.impl;
 
+import com.splitwise.dto.response.ApiResponse;
 import com.splitwise.entity.User;
+import com.splitwise.exception.UserNotFound;
 import com.splitwise.repository.UserRepository;
 import com.splitwise.service.UserService;
 import com.sun.jdi.InternalException;
-import jakarta.validation.ConstraintViolationException;
-import jdk.jshell.spi.ExecutionControl;
-import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 
 @Service
@@ -21,23 +22,53 @@ public class UserServiceImpl implements UserService {
     UserRepository userRepository;
 
     @Override
-    public String addUser(User user) {
+    public ApiResponse<Object> createUser(User user) {
+        User savedUser;
         try {
-            userRepository.save(user);
+            savedUser = userRepository.save(user);
         }catch (DataIntegrityViolationException ex){
-            System.out.println(ex);
-            throw ex;
+            throw new DataIntegrityViolationException("User with this email already exists");
         }
-        return "Success";
 
+        return ApiResponse.builder()
+                .message("User is created")
+                .success(true)
+                .data(Map.of("UserId", savedUser.getId()))
+                .build();
     }
 
     @Override
-    public List<User> getAllUsers() {
+    public ApiResponse<Object> getAllUsers() {
+        List<User> users;
         try {
-            return userRepository.findAll();
+            users =  userRepository.findAll();
         }catch (Exception ex ){
             throw new InternalException("Internal Server Error");
         }
+        if(users.isEmpty()){
+            return ApiResponse.builder()
+                    .success(true)
+                    .message("No user Found")
+                    .build();
+        }
+
+        return ApiResponse.builder()
+                .data(users)
+                .success(true)
+                .message("All users")
+                .build();
     }
+
+    @Override
+    public ApiResponse<Object> findUserById(UUID id) {
+        User user =  userRepository.findById(id).orElseThrow(UserNotFound::new);
+        return ApiResponse.builder()
+                .data(user)
+                .success(true)
+                .message("User with id" + user.getId())
+                .build();
+
+    }
+
+
 }

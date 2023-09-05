@@ -3,11 +3,19 @@ package com.splitwise.controller;
 import com.splitwise.dto.request.expense.ExpenseRequestDTO;
 import com.splitwise.dto.request.expense.GroupExpenseRequestDTO;
 import com.splitwise.dto.request.expense.UserExpenseRequestDTO;
+import com.splitwise.dto.response.ApiResponse;
+import com.splitwise.enums.ExpenseCategory;
+import com.splitwise.enums.ExpenseType;
 import com.splitwise.service.ExpenseService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("api/v1/expense")
@@ -16,29 +24,27 @@ public class ExpenseController {
     @Autowired
     ExpenseService expenseService;
 
-    @GetMapping("me")
-    public ResponseEntity<String> createExpenseByUsers(){
-        return new ResponseEntity<>("me", HttpStatus.OK);
+
+    @PostMapping
+    public ResponseEntity<ApiResponse<Object>> createExpense(@RequestBody ExpenseRequestDTO expenseRequestDTO){
+        return new ResponseEntity<>(expenseService.createExpense(expenseRequestDTO), HttpStatus.CREATED);
     }
 
-
     @PostMapping("users")
-    public ResponseEntity<String> createExpenseByUsers(@RequestBody UserExpenseRequestDTO userExpenseRequestDTO){
-        return new ResponseEntity<>(expenseService.createExpenseByUsers(userExpenseRequestDTO), HttpStatus.CREATED);
+    public ResponseEntity<ApiResponse<Object>> createExpenseWithUsers(@RequestBody UserExpenseRequestDTO userExpenseRequestDTO){
+        return new ResponseEntity<>(expenseService.createExpenseWithUsers(userExpenseRequestDTO), HttpStatus.CREATED);
     }
 
     @PostMapping("group")
-    public ResponseEntity<String> createExpenseByGroup(@RequestBody GroupExpenseRequestDTO groupExpenseRequestDTO){
-        return new ResponseEntity<>(expenseService.createExpenseByGroup(groupExpenseRequestDTO), HttpStatus.CREATED);
+    public ResponseEntity<ApiResponse<Object>> createExpenseWithGroups(@RequestBody GroupExpenseRequestDTO groupExpenseRequestDTO){
+        return new ResponseEntity<>(expenseService.createExpenseWithGroups(groupExpenseRequestDTO), HttpStatus.CREATED);
     }
 
-    /**
-     *
-     * @return String
-     * add the expense individually
-     */
+
     @PostMapping("individual")
-    public ResponseEntity<String> createExpenseIndividual(@RequestBody ExpenseRequestDTO expenseRequestDTO){
+    public ResponseEntity<ApiResponse<Object>> createExpenseIndividual(@Valid @RequestBody ExpenseRequestDTO expenseRequestDTO){
+
         return new ResponseEntity<>(expenseService.createExpenseIndividual(expenseRequestDTO), HttpStatus.CREATED);
     }
+
 }

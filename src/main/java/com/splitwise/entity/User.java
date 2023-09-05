@@ -1,5 +1,6 @@
 package com.splitwise.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
@@ -32,8 +33,11 @@ public class User {
     @Pattern(regexp = "^[6-9]\\d{9}$", message = "Invalid mobile number")
     private String mobile;
 
+
+
     @NotEmpty(message = "password is missing")
     @Size(min = 7, max = 30, message = "Password length should in between 7 to 30")
     private String password;
+
 
 }

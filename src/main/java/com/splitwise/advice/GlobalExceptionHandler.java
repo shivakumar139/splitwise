@@ -1,9 +1,9 @@
 package com.splitwise.advice;
 
+import com.splitwise.exception.GroupNotFound;
 import com.splitwise.exception.UserNotFound;
 import com.sun.jdi.InternalException;
-import jakarta.validation.ConstraintViolationException;
-import jdk.jshell.spi.ExecutionControl;
+
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,30 +17,35 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(UserNotFound.class)
-    public ResponseEntity<Map<String, String>> userNotFoundExceptionHandle(UserNotFound ex){
 
-        Map<String, String> map = new HashMap<>();
-        map.put("Error Message", ex.getMessage());
-        return new ResponseEntity<>(map, HttpStatus.NOT_FOUND);
-    }
-
-    @ExceptionHandler({InternalException.class, DataIntegrityViolationException.class})
+    @ExceptionHandler({InternalException.class})
     public ResponseEntity<Map<String, String>> internalServerErrorExceptionHandle(Exception ex){
 
         Map<String, String> map = new HashMap<>();
-        map.put("Error Message", ex.getMessage());
+        map.put("ErrorMessage", ex.getMessage());
 
         return new ResponseEntity<>(map, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-//    @ExceptionHandler({DataIntegrityViolationException.class})
-//    public ResponseEntity<Map<String, String>> validationExceptionHandle(DataIntegrityViolationException ex) {
-//
-//        Map<String, String> map = new HashMap<>();
-//        System.out.println(ex);
-//        map.put()
-//
-//    }
+    @ExceptionHandler({DataIntegrityViolationException.class, UserNotFound.class, GroupNotFound.class, Exception.class})
+    public ResponseEntity<Map<String, String>> globalExceptionHandle(Exception ex){
+
+        Map<String, String> map = new HashMap<>();
+        map.put("ErrorMessage", ex.getMessage());
+
+        return new ResponseEntity<>(map, HttpStatus.BAD_REQUEST);
+    }
+
+
+    @ExceptionHandler({MethodArgumentNotValidException.class})
+    public ResponseEntity<Map<String, String>> handleValidationException(MethodArgumentNotValidException ex) {
+        Map<String, String> errors = new HashMap<>();
+
+        ex.getBindingResult().getAllErrors().forEach(error -> {
+            errors.put(error.getCode(), error.getDefaultMessage());
+        });
+
+        return new ResponseEntity<>(errors, HttpStatus.PARTIAL_CONTENT);
+    }
 
 }
