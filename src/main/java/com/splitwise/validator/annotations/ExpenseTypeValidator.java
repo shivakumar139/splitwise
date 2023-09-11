@@ -5,20 +5,28 @@ import com.splitwise.enums.ExpenseType;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
-import java.util.Map;
 
 
 public class ExpenseTypeValidator implements ConstraintValidator<ValidExpenseType, ExpenseRequestDTO> {
     @Override
     public boolean isValid(ExpenseRequestDTO expenseRequestDTO, ConstraintValidatorContext context) {
+        // Check if expenseType is INDIVIDUAL and participants is null
         if (expenseRequestDTO.getExpenseType() == ExpenseType.INDIVIDUAL) {
-            // Do not validate participants field.
-            context.disableDefaultConstraintViolation();
-            return true;
+            if (expenseRequestDTO.getParticipants() != null) {
+                context.buildConstraintViolationWithTemplate("Participants is not needed in INDIVIDUAL Expense").addConstraintViolation();
+                context.disableDefaultConstraintViolation();
+                return false;
+            }
+            return true; // Skip validation in this case
         }
 
-        // Validate participants field.
-        context.buildConstraintViolationWithTemplate("Participants are missing").addConstraintViolation();
-        return expenseRequestDTO.getParticipants() != null;
+
+
+        // If not INDIVIDUAL or participants is not null, validate participants field.
+        if (expenseRequestDTO.getParticipants() == null) {
+            context.buildConstraintViolationWithTemplate("Participants are missing").addConstraintViolation();
+            return false;
+        }
+        return true;
     }
 }

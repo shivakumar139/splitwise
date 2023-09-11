@@ -1,6 +1,5 @@
 package com.splitwise.dto.request.expense;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.splitwise.enums.ExpenseCategory;
 import com.splitwise.enums.ExpenseType;
 
@@ -10,15 +9,12 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.UUID;
 
 @Data
 @NoArgsConstructor

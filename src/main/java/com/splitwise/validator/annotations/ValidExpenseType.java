@@ -8,14 +8,14 @@ import java.lang.annotation.*;
 
 
 /**
- * If expense type is INDIVIDUAL
+ * If expense type is INDIVIDUAL do no validate Participants
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = ExpenseTypeValidator.class)
 @Target(ElementType.TYPE)
 public @interface ValidExpenseType {
-    String message() default "Invalid expense type";
+    String message() default "Empty or Null";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
 }
