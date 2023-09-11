@@ -22,7 +22,7 @@ import java.util.UUID;
 public class Group {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+    private String id;
 
     @NotEmpty(message = "Name is missing")
     private String name;
@@ -43,6 +43,10 @@ public class Group {
             inverseJoinColumns = @JoinColumn(name = "fk_user_id")
     )
     private Set<User> users;
+
+
+    @ManyToMany(mappedBy = "groups")
+    private List<Expense> expenses;
 
 
 

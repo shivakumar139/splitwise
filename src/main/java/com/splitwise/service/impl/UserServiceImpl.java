@@ -2,7 +2,7 @@ package com.splitwise.service.impl;
 
 import com.splitwise.dto.response.ApiResponse;
 import com.splitwise.entity.User;
-import com.splitwise.exception.UserNotFound;
+import com.splitwise.exception.UserNotFoundException;
 import com.splitwise.repository.UserRepository;
 import com.splitwise.service.UserService;
 import com.sun.jdi.InternalException;
@@ -15,7 +15,7 @@ import java.util.Map;
 import java.util.UUID;
 
 
-@Service
+@Service("userService")
 public class UserServiceImpl implements UserService {
 
     @Autowired
@@ -60,8 +60,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ApiResponse<Object> findUserById(UUID id) {
-        User user =  userRepository.findById(id).orElseThrow(UserNotFound::new);
+    public ApiResponse<Object> findUserById(String id) {
+        User user =  userRepository.findById(id).orElseThrow(UserNotFoundException::new);
         return ApiResponse.builder()
                 .data(user)
                 .success(true)

@@ -1,16 +1,17 @@
 package com.splitwise.dto.request.expense;
 
 import com.splitwise.enums.ParticipantType;
+import com.splitwise.validator.annotations.NotBlankEnum;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Map;
+import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 
 @Data
 @NoArgsConstructor
@@ -18,14 +19,14 @@ import java.util.UUID;
 @Builder
 public class Participants {
 
+    @NotBlankEnum(enumClass = ParticipantType.class ,message = "Invalid Participant Type")
     @Enumerated(EnumType.STRING)
     private ParticipantType type;
 
-    private Map<UUID, Double> userIdsWithShare;
+    @NotEmpty(message = "Shares are missing")
+    private List<Double> shares;
 
-    private Map<UUID, Double> groupIdsWithShare;
-
-    private Set<UUID> userIds;
-
+    @NotEmpty(message = "ids are missing")
+    private Set<String> ids;
 
 }

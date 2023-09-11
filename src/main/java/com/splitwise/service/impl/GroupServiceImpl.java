@@ -5,17 +5,15 @@ import com.splitwise.dto.response.ApiResponse;
 import com.splitwise.entity.Group;
 import com.splitwise.entity.User;
 import com.splitwise.exception.CreatorAndDeletedAreSameException;
-import com.splitwise.exception.GroupNotFound;
-import com.splitwise.exception.UserIsAlreadyExistsInGroup;
+import com.splitwise.exception.GroupNotFoundException;
+import com.splitwise.exception.UserIsAlreadyExistsInGroupException;
 import com.splitwise.repository.GroupRepository;
 import com.splitwise.service.GroupService;
 import com.splitwise.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -53,7 +51,7 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
-    public ApiResponse<Object> deleteGroup(UUID groupId) {
+    public ApiResponse<Object> deleteGroup(String groupId) {
         groupRepository.deleteById(groupId);
 
         return ApiResponse.builder()
@@ -64,14 +62,14 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
-    public ApiResponse<Object> addUserToGroup(UUID groupId, UUID userId) {
-        Group group = groupRepository.findById(groupId).orElseThrow(GroupNotFound::new);
+    public ApiResponse<Object> addUserToGroup(String groupId, String userId) {
+        Group group = groupRepository.findById(groupId).orElseThrow(GroupNotFoundException::new);
         User user = (User) userService.findUserById(userId).getData();
 
         // get prev users
         Set<User> users = group.getUsers();
         if(users.contains(user)){
-            throw new UserIsAlreadyExistsInGroup("user is already exists in the group " + group.getName());
+            throw new UserIsAlreadyExistsInGroupException("user is already exists in the group " + group.getName());
         }
 
         // add new user
@@ -89,9 +87,9 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
-    public ApiResponse<Object> removeUserFromGroup(UUID groupId, UUID userId) {
+    public ApiResponse<Object> removeUserFromGroup(String groupId, String userId) {
 
-        Group group = groupRepository.findById(groupId).orElseThrow(GroupNotFound::new);
+        Group group = groupRepository.findById(groupId).orElseThrow(GroupNotFoundException::new);
         User user = (User) userService.findUserById(userId).getData();
 
         // get prev users
@@ -117,8 +115,8 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
-    public ApiResponse<Object> getGroupMembers(UUID groupId) {
-        Group group = groupRepository.findById(groupId).orElseThrow(GroupNotFound::new);
+    public ApiResponse<Object> getGroupMembers(String groupId) {
+        Group group = groupRepository.findById(groupId).orElseThrow(GroupNotFoundException::new);
 
         return ApiResponse.builder()
                 .message("List of Group Members of group " + group.getName())

@@ -9,9 +9,9 @@ import java.util.UUID;
 
 public interface GroupService {
     ApiResponse<Object> createGroup(GroupRequestDto groupRequestDto);
-    ApiResponse<Object> deleteGroup(UUID groupId);
-    ApiResponse<Object> addUserToGroup(UUID groupId, UUID userId);
-    ApiResponse<Object> removeUserFromGroup(UUID groupId, UUID userId);
-    ApiResponse<Object> getGroupMembers(UUID groupId);
+    ApiResponse<Object> deleteGroup(String groupId);
+    ApiResponse<Object> addUserToGroup(String groupId, String userId);
+    ApiResponse<Object> removeUserFromGroup(String groupId, String userId);
+    ApiResponse<Object> getGroupMembers(String groupId);
 
 }

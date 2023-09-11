@@ -24,25 +24,25 @@ public class GroupController {
     }
 
     @GetMapping("/{groupId}/{userId}")
-    public ResponseEntity<ApiResponse<Object>> addUserToGroup(@PathVariable("groupId") UUID groupId, @PathVariable("userId") UUID userId){
+    public ResponseEntity<ApiResponse<Object>> addUserToGroup(@PathVariable("groupId") String groupId, @PathVariable("userId") String userId){
         return new ResponseEntity<>(groupService.addUserToGroup(groupId, userId), HttpStatus.OK);
 
     }
 
     @DeleteMapping("/{groupId}")
-    public ResponseEntity<ApiResponse<Object>> deleteGroup(@PathVariable UUID groupId){
+    public ResponseEntity<ApiResponse<Object>> deleteGroup(@PathVariable String groupId){
         return new ResponseEntity<>(groupService.deleteGroup(groupId), HttpStatus.OK);
     }
 
     @GetMapping("/{groupId}")
-    public ResponseEntity<ApiResponse<Object>> getGroupMembers(@PathVariable UUID groupId){
+    public ResponseEntity<ApiResponse<Object>> getGroupMembers(@PathVariable String groupId){
         return new ResponseEntity<>(groupService.getGroupMembers(groupId), HttpStatus.OK);
 
     }
 
 
     @DeleteMapping("/{groupId}/{userId}")
-    public ResponseEntity<ApiResponse<Object>> removeUserFromGroup(@PathVariable("groupId") UUID groupId, @PathVariable("userId") UUID userId){
+    public ResponseEntity<ApiResponse<Object>> removeUserFromGroup(@PathVariable("groupId") String groupId, @PathVariable("userId") String userId){
         return new ResponseEntity<>(groupService.removeUserFromGroup(groupId, userId), HttpStatus.OK);
 
     }

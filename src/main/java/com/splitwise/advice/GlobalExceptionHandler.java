@@ -1,7 +1,7 @@
 package com.splitwise.advice;
 
-import com.splitwise.exception.GroupNotFound;
-import com.splitwise.exception.UserNotFound;
+import com.splitwise.exception.GroupNotFoundException;
+import com.splitwise.exception.UserNotFoundException;
 import com.sun.jdi.InternalException;
 
 import org.springframework.dao.DataIntegrityViolationException;
@@ -27,7 +27,7 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(map, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    @ExceptionHandler({DataIntegrityViolationException.class, UserNotFound.class, GroupNotFound.class, Exception.class})
+    @ExceptionHandler({DataIntegrityViolationException.class, UserNotFoundException.class, GroupNotFoundException.class, Exception.class})
     public ResponseEntity<Map<String, String>> globalExceptionHandle(Exception ex){
 
         Map<String, String> map = new HashMap<>();

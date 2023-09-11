@@ -13,5 +13,5 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserExpenseRequestDTO extends ExpenseRequestDTO{
-    private List<UUID> userList;
+    private List<String> userList;
 }

@@ -25,7 +25,7 @@ import java.util.UUID;
 public class Expense {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+    private String id;
 
     @NotNull(message = "Expense type is missing")
     @Enumerated(EnumType.STRING)
@@ -48,11 +48,19 @@ public class Expense {
     private User payer;
 
 
-    @ManyToMany
+
+
     @JoinTable(
             name = "expense_group_association",
             joinColumns = @JoinColumn(name = "fk_expense_id"),
             inverseJoinColumns = @JoinColumn(name = "fk_group_id")
     )
+    @ManyToMany(fetch = FetchType.LAZY)
     private List<Group> groups;
+
+
+    @PrePersist
+    public void setCreatedAt(){
+        this.createdAt = LocalDateTime.now();
+    }
 }

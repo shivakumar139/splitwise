@@ -18,7 +18,7 @@ public class GroupRequestDto {
     private String name;
 
     @NotNull(message = "Created By ID is missing")
-    private UUID createdBy;
+    private String createdBy;
 
     private String description;
 }

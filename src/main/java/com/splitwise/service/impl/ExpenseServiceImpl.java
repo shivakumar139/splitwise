@@ -6,26 +6,27 @@ import com.splitwise.dto.request.expense.GroupExpenseRequestDTO;
 import com.splitwise.dto.request.expense.UserExpenseRequestDTO;
 import com.splitwise.dto.response.ApiResponse;
 import com.splitwise.entity.Expense;
+import com.splitwise.entity.Split;
 import com.splitwise.entity.User;
-import com.splitwise.enums.ExpenseCategory;
 import com.splitwise.enums.ExpenseType;
-import com.splitwise.exception.UserNotFound;
+import com.splitwise.enums.ParticipantType;
+import com.splitwise.exception.InvalidExpenseException;
+import com.splitwise.factory.ExpenseValidatorFactory;
 import com.splitwise.repository.ExpenseRepository;
-import com.splitwise.repository.UserRepository;
 import com.splitwise.service.ExpenseService;
+import com.splitwise.service.SplitService;
 import com.splitwise.service.UserService;
-import com.sun.jdi.InternalException;
+import com.splitwise.validator.expense.ExpenseValidator;
 import jakarta.transaction.Transactional;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 @Service
@@ -37,20 +38,49 @@ public class ExpenseServiceImpl implements ExpenseService {
     @Autowired
     UserService userService;
 
+    @Autowired
+    SplitService splitService;
+
+    @Autowired
+    ExpenseValidatorFactory expenseValidatorFactory;
 
     @Override
     public ApiResponse<Object> createExpenseWithUsers(UserExpenseRequestDTO userExpenseRequestDTO) {
+
         return null;
     }
 
+    @Transactional
     @Override
     public ApiResponse<Object> createExpense(ExpenseRequestDTO expenseRequestDTO) {
+
+        ExpenseValidator expenseValidator = expenseValidatorFactory.getObject(expenseRequestDTO.getExpenseType());
+
+        if(!expenseValidator.validate(expenseRequestDTO)){
+            throw new InvalidExpenseException("Total Amount is not equal to the shared amount");
+        }
+
+        User payer = (User) userService.findUserById(expenseRequestDTO.getPayerId()).getData();
+
+        Expense expense = Expense.builder()
+                .payer(payer)
+                .expenseType(expenseRequestDTO.getExpenseType())
+                .category(expenseRequestDTO.getCategory())
+                .description(expenseRequestDTO.getDesc())
+                .amount(expenseRequestDTO.getAmount())
+                .build();
+        expenseRepository.save(expense);
+
+        splitService.createSplit(expense, expenseRequestDTO);
+
         return ApiResponse.builder()
                 .success(true)
                 .data(expenseRequestDTO)
                 .message("Expense is created")
                 .build();
     }
+
+
 
     @Override
     public ApiResponse<Object> createExpenseWithGroups(GroupExpenseRequestDTO userExpenseRequestDTO) {
@@ -98,5 +128,16 @@ public class ExpenseServiceImpl implements ExpenseService {
             throw e;
         }
 
+    }
+
+    @Override
+    public ApiResponse<Object> getAllExpense() {
+        List<Expense> expenses = expenseRepository.findAll();
+
+        return ApiResponse.builder()
+                .data(expenses)
+                .message("All expense")
+                .success(true)
+                .build();
     }
 }

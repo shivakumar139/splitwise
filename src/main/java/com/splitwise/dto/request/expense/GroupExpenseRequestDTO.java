@@ -11,5 +11,5 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class GroupExpenseRequestDTO extends ExpenseRequestDTO{
-    private List<UUID> groupList;
+    private List<String> groupList;
 }
