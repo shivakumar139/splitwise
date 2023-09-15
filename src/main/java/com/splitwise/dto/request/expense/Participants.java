@@ -23,7 +23,6 @@ public class Participants {
     @Enumerated(EnumType.STRING)
     private ParticipantType type;
 
-    @NotEmpty(message = "Shares are missing")
     private List<Double> shares;
 
     @NotEmpty(message = "ids are missing")

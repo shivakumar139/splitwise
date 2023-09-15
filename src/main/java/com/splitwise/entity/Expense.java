@@ -1,5 +1,7 @@
 package com.splitwise.entity;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.splitwise.enums.ExpenseCategory;
 import com.splitwise.enums.ExpenseType;
 import jakarta.persistence.*;
@@ -22,6 +24,10 @@ import java.util.UUID;
 @Data
 @Table(name = "expense")
 @Builder
+
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "id")
 public class Expense {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -58,6 +64,8 @@ public class Expense {
     @ManyToMany(fetch = FetchType.LAZY)
     private List<Group> groups;
 
+    @OneToMany(mappedBy = "expense", fetch = FetchType.LAZY)
+    private List<Split> splits;
 
     @PrePersist
     public void setCreatedAt(){

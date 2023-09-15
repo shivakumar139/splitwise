@@ -50,14 +50,18 @@ public class ExpenseServiceImpl implements ExpenseService {
         return null;
     }
 
+
+
     @Transactional
     @Override
     public ApiResponse<Object> createExpense(ExpenseRequestDTO expenseRequestDTO) {
 
+        System.out.println("********** createExpense ************");
         ExpenseValidator expenseValidator = expenseValidatorFactory.getObject(expenseRequestDTO.getExpenseType());
 
         if(!expenseValidator.validate(expenseRequestDTO)){
-            throw new InvalidExpenseException("Total Amount is not equal to the shared amount");
+            throw new InvalidExpenseException("Invalid Expense");
+
         }
 
         User payer = (User) userService.findUserById(expenseRequestDTO.getPayerId()).getData();
@@ -75,7 +79,7 @@ public class ExpenseServiceImpl implements ExpenseService {
 
         return ApiResponse.builder()
                 .success(true)
-                .data(expenseRequestDTO)
+                .data(expense)
                 .message("Expense is created")
                 .build();
     }

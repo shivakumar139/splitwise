@@ -42,7 +42,6 @@ public class SplitServiceImpl implements SplitService {
         List<OwedDetails> owedDetailsList = amountSplitter.split(expenseRequestDTO);
 
 
-        System.out.println(expenseRequestDTO.getParticipants().getType());
         if(expenseRequestDTO.getParticipants().getType() == ParticipantType.USERS){
             saveSplitWithUsers(expense, owedDetailsList);
         }
@@ -60,18 +59,9 @@ public class SplitServiceImpl implements SplitService {
                         .build()
         ).toList();
 
-        for(Split split: splits){
-            System.out.println("splitId -> " + split.getId());
-            System.out.println("expenseId -> " + split.getExpense().getId());
-            System.out.println("userId -> " + split.getUser().getId());
-        }
 
-        splitRepository.saveAllAndFlush(splits);
+        splitRepository.saveAll(splits);
 
-//        for(Split split: splits){
-//            splitRepository.saveAllAndFlush(split);
-//            System.out.println(split.getId());
-//        }
 
     }
 }
