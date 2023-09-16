@@ -26,6 +26,6 @@ public class Participants {
     private List<Double> shares;
 
     @NotEmpty(message = "ids are missing")
-    private Set<String> ids;
+    private List<String> ids;
 
 }

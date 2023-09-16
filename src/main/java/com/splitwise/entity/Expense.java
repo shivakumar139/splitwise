@@ -61,10 +61,17 @@ public class Expense {
             joinColumns = @JoinColumn(name = "fk_expense_id"),
             inverseJoinColumns = @JoinColumn(name = "fk_group_id")
     )
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(
+            fetch = FetchType.LAZY,
+            cascade = CascadeType.PERSIST
+    )
     private List<Group> groups;
 
-    @OneToMany(mappedBy = "expense", fetch = FetchType.LAZY)
+    @OneToMany(
+            mappedBy = "expense",
+            fetch = FetchType.LAZY,
+            cascade = CascadeType.ALL
+    )
     private List<Split> splits;
 
     @PrePersist

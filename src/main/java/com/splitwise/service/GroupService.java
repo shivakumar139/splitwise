@@ -13,5 +13,5 @@ public interface GroupService {
     ApiResponse<Object> addUserToGroup(String groupId, String userId);
     ApiResponse<Object> removeUserFromGroup(String groupId, String userId);
     ApiResponse<Object> getGroupMembers(String groupId);
-
+    Group findById(String id);
 }

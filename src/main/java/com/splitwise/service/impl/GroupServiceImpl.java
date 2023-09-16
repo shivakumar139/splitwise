@@ -78,7 +78,6 @@ public class GroupServiceImpl implements GroupService {
         group.setUsers(users);
         groupRepository.save(group);
 
-
         return ApiResponse.builder()
                 .message("User is added to the group "+ group.getName())
                 .success(true)
@@ -94,6 +93,14 @@ public class GroupServiceImpl implements GroupService {
 
         // get prev users
         Set<User> users = group.getUsers();
+
+        if(!users.contains(user)){
+            return ApiResponse.builder()
+                    .message("Invalid User")
+                    .success(true)
+                    .data(Map.of("groupId", groupId, "userId", userId, "userName", user.getName()))
+                    .build();
+        }
 
         // add remove user
         users.remove(user);
@@ -123,5 +130,10 @@ public class GroupServiceImpl implements GroupService {
                 .success(true)
                 .data(group.getUsers())
                 .build();
+    }
+
+    @Override
+    public Group findById(String id) {
+        return groupRepository.findById(id).orElseThrow(GroupNotFoundException::new);
     }
 }

@@ -1,5 +1,7 @@
 package com.splitwise.entity;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -19,6 +21,9 @@ import java.util.UUID;
 @NoArgsConstructor
 @Entity
 @Table(name = "table_groups")
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "id")
 public class Group {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -32,7 +37,7 @@ public class Group {
     @JoinColumn(name = "fk_creator_id")
     private User createdBy;
 
-    private LocalDateTime createdAt = LocalDateTime.now();
+    private LocalDateTime createdAt;
 
     private String description;
 
@@ -45,10 +50,18 @@ public class Group {
     private Set<User> users;
 
 
-    @ManyToMany(mappedBy = "groups")
+    @ManyToMany(
+            mappedBy = "groups",
+            cascade = CascadeType.ALL
+    )
     private List<Expense> expenses;
 
 
+
+    @PrePersist
+    private void setCreatedAt(){
+        this.createdAt = LocalDateTime.now();
+    }
 
 
 

@@ -1,8 +1,6 @@
 package com.splitwise.controller;
 
 import com.splitwise.dto.request.expense.ExpenseRequestDTO;
-import com.splitwise.dto.request.expense.GroupExpenseRequestDTO;
-import com.splitwise.dto.request.expense.UserExpenseRequestDTO;
 import com.splitwise.dto.response.ApiResponse;
 
 import com.splitwise.service.ExpenseService;
@@ -32,24 +30,6 @@ public class ExpenseController {
         return new ResponseEntity<>(expenseService.createExpense(expenseRequestDTO), HttpStatus.CREATED);
     }
 
-
-
-    @PostMapping("users")
-    public ResponseEntity<ApiResponse<Object>> createExpenseWithUsers(@RequestBody UserExpenseRequestDTO userExpenseRequestDTO){
-        return new ResponseEntity<>(expenseService.createExpenseWithUsers(userExpenseRequestDTO), HttpStatus.CREATED);
-    }
-
-    @PostMapping("group")
-    public ResponseEntity<ApiResponse<Object>> createExpenseWithGroups(@RequestBody GroupExpenseRequestDTO groupExpenseRequestDTO){
-        return new ResponseEntity<>(expenseService.createExpenseWithGroups(groupExpenseRequestDTO), HttpStatus.CREATED);
-    }
-
-
-    @PostMapping("individual")
-    public ResponseEntity<ApiResponse<Object>> createExpenseIndividual(@Valid @RequestBody ExpenseRequestDTO expenseRequestDTO){
-
-        return new ResponseEntity<>(expenseService.createExpenseIndividual(expenseRequestDTO), HttpStatus.CREATED);
-    }
 
     @GetMapping
     public ResponseEntity<ApiResponse<Object>> getAllExpense(){
