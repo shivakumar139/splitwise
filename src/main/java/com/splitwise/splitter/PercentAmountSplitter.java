@@ -12,9 +12,6 @@ import java.util.List;
 @Component
 public class PercentAmountSplitter implements AmountSplitter{
 
-    @Autowired
-    private UserService userService;
-
     @Override
     public List<OwedDetails> split(ExpenseRequestDTO expenseRequestDTO) {
         List<String> ids = expenseRequestDTO.getParticipants().getIds().stream().toList();
@@ -24,10 +21,9 @@ public class PercentAmountSplitter implements AmountSplitter{
         List<OwedDetails> owedDetails = new ArrayList<>();
 
         for(int i=0; i< shares.size(); i++){
-            User user = (User) userService.findUserById(ids.get(i)).getData();
             double percentAmount = getPercentageAmount(totalAmount, shares.get(i));
 
-            owedDetails.add(new OwedDetails(user, percentAmount));
+            owedDetails.add(new OwedDetails(ids.get(i), percentAmount));
         }
 
         return owedDetails;

@@ -3,6 +3,7 @@ package com.splitwise.service.impl;
 import com.splitwise.dto.request.expense.ExpenseRequestDTO;
 import com.splitwise.entity.Expense;
 import com.splitwise.entity.Split;
+import com.splitwise.entity.User;
 import com.splitwise.enums.ParticipantType;
 import com.splitwise.factory.AmountSplitterFactory;
 import com.splitwise.repository.SplitRepository;
@@ -52,10 +53,11 @@ public class SplitServiceImpl implements SplitService {
 
         return owedDetailsList.stream().map(owedDetails ->
                 Split.builder()
-                        .user(owedDetails.getUser())
+                        .user((User)userService.findUserById(owedDetails.getId()).getData())
                         .amount(owedDetails.getShare())
                         .expense(expense)
                         .build()
+
         ).toList();
 
 

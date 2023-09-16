@@ -14,11 +14,6 @@ import java.util.UUID;
 @Component
 public class ExactAmountSplitter implements AmountSplitter{
 
-    @Autowired
-    private UserService userService;
-
-
-
     @Override
     public List<OwedDetails> split(ExpenseRequestDTO expenseRequestDTO) {
 
@@ -29,10 +24,8 @@ public class ExactAmountSplitter implements AmountSplitter{
 
         // get one user and create a OwedDetail with that user
         for(int i=0; i<shares.size(); i++){
-            User user = (User) userService.findUserById(userIds.get(i)).getData();
-
             OwedDetails owedDetail = OwedDetails.builder()
-                    .user(user)
+                    .id(userIds.get(i))
                     .share(shares.get(i))
                     .build();
 

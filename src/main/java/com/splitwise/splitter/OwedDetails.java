@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class OwedDetails {
-    private User user;
+    private String id;
     private double share;
 
 }

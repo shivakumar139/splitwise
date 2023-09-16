@@ -15,11 +15,6 @@ import java.util.List;
 @Component
 public class EqualAmountSplitter implements AmountSplitter{
 
-    @Autowired
-    private UserService userService;
-
-    @Autowired
-    private GroupService groupService;
     @Override
     public List<OwedDetails> split(ExpenseRequestDTO expenseRequestDTO) {
 
@@ -46,18 +41,17 @@ public class EqualAmountSplitter implements AmountSplitter{
         List<OwedDetails> owedDetails = new ArrayList<>();
 
         for(String id: usersIds){
-            User user = (User) userService.findUserById(id).getData();
 
             if(remain != 0){
                 double newAmount = perShareAmount + remain;
                 remain = 0;
                 newAmount = Math.round(newAmount * 100.00)/100.0;
-                owedDetails.add(new OwedDetails(user, newAmount));
+                owedDetails.add(new OwedDetails(id, newAmount));
                 continue;
             }
 
 
-            owedDetails.add(new OwedDetails(user, perShareAmount));
+            owedDetails.add(new OwedDetails(id, perShareAmount));
 
         }
 
