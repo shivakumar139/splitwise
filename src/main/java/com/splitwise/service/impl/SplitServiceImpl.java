@@ -1,12 +1,15 @@
 package com.splitwise.service.impl;
 
 import com.splitwise.dto.request.expense.ExpenseRequestDTO;
+import com.splitwise.dto.request.expense.Participants;
 import com.splitwise.entity.Expense;
+import com.splitwise.entity.Group;
 import com.splitwise.entity.Split;
 import com.splitwise.entity.User;
 import com.splitwise.enums.ParticipantType;
 import com.splitwise.factory.AmountSplitterFactory;
 import com.splitwise.repository.SplitRepository;
+import com.splitwise.service.GroupService;
 import com.splitwise.service.SplitService;
 import com.splitwise.service.UserService;
 import com.splitwise.splitter.AmountSplitter;
@@ -16,7 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-
+import java.util.Set;
 
 
 @Service
@@ -31,6 +34,9 @@ public class SplitServiceImpl implements SplitService {
     @Autowired
     AmountSplitterFactory amountSplitterFactory;
 
+    @Autowired
+    private GroupService groupService;
+
     @Override
     public List<Split> createSplit(Expense expense, ExpenseRequestDTO expenseRequestDTO) {
         // get amountSplitter based on expense type
@@ -44,8 +50,45 @@ public class SplitServiceImpl implements SplitService {
             splits = splitWithUsers(expense, owedDetailsList);
         }
 
+        if(expenseRequestDTO.getParticipants().getType() == ParticipantType.GROUPS){
+            splits = splitWithGroups(expense, owedDetailsList, expenseRequestDTO);
+        }
+
 
         return splits;
+    }
+
+    private List<Split> splitWithGroups(Expense expense, List<OwedDetails> owedDetailsList, ExpenseRequestDTO expenseRequestDTO) {
+
+        List<Split> splits = new ArrayList<>();
+
+        owedDetailsList.forEach(owedDetail -> {
+            Group group = groupService.findById(owedDetail.getId());
+            Set<User> users = group.getUsers();
+            List<String> ids = users.stream().map(User::getId).toList();
+
+            // get amountSplitter based on expense type
+            AmountSplitter amountSplitter = amountSplitterFactory.getObject(expenseRequestDTO.getExpenseType());
+
+
+            Participants participants = Participants.builder()
+                    .shares(expenseRequestDTO.getParticipants().getShares())
+                    .ids(ids)
+                    .build();
+
+
+            ExpenseRequestDTO expenseRequestDTO1 = ExpenseRequestDTO.builder()
+                    .amount(owedDetail.getShare())
+                    .participants(participants)
+                    .build();
+            List<OwedDetails> owedDetailsList1 = amountSplitter.split(expenseRequestDTO1);
+
+            splits.addAll(splitWithUsers(expense, owedDetailsList1));
+
+        });
+
+        return splits;
+
     }
 
 

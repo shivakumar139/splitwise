@@ -2,6 +2,7 @@ package com.splitwise.service.impl;
 
 import com.splitwise.dto.request.GroupRequestDto;
 import com.splitwise.dto.response.ApiResponse;
+import com.splitwise.entity.Expense;
 import com.splitwise.entity.Group;
 import com.splitwise.entity.User;
 import com.splitwise.exception.CreatorAndDeletedAreSameException;
@@ -14,9 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class GroupServiceImpl implements GroupService {
@@ -136,4 +135,18 @@ public class GroupServiceImpl implements GroupService {
     public Group findById(String id) {
         return groupRepository.findById(id).orElseThrow(GroupNotFoundException::new);
     }
+
+    @Override
+    public ApiResponse<Object> getGroupExpenses(String groupId) {
+        List<Expense> expenses = groupRepository.findById(groupId).orElseThrow(GroupNotFoundException::new).getExpenses();
+
+
+
+        return ApiResponse.builder()
+                .success(true)
+                .message("List of expenses")
+                .data(expenses)
+                .build();
+    }
+
 }

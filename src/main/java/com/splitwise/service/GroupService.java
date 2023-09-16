@@ -5,6 +5,7 @@ import com.splitwise.dto.response.ApiResponse;
 import com.splitwise.entity.Group;
 import com.splitwise.entity.User;
 
+import java.util.List;
 import java.util.UUID;
 
 public interface GroupService {
@@ -14,4 +15,6 @@ public interface GroupService {
     ApiResponse<Object> removeUserFromGroup(String groupId, String userId);
     ApiResponse<Object> getGroupMembers(String groupId);
     Group findById(String id);
+    ApiResponse<Object> getGroupExpenses(String groupId);
+
 }

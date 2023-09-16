@@ -69,8 +69,7 @@ public class Expense {
 
     @OneToMany(
             mappedBy = "expense",
-            fetch = FetchType.LAZY,
-            cascade = CascadeType.ALL
+            cascade = CascadeType.PERSIST
     )
     private List<Split> splits;
 

@@ -46,4 +46,11 @@ public class GroupController {
         return new ResponseEntity<>(groupService.removeUserFromGroup(groupId, userId), HttpStatus.OK);
 
     }
+
+    // get group expenses by id
+    @GetMapping("/expenses/{groupId}")
+    public ResponseEntity<ApiResponse<Object>> getGroupExpenses(@PathVariable String groupId){
+        return new ResponseEntity<>(groupService.getGroupExpenses(groupId), HttpStatus.OK);
+
+    }
 }
