@@ -11,6 +11,7 @@ import com.splitwise.enums.ExpenseType;
 import com.splitwise.enums.ParticipantType;
 import com.splitwise.exception.InvalidExpenseException;
 import com.splitwise.factory.ExpenseValidatorFactory;
+import com.splitwise.mapper.CustomMapper;
 import com.splitwise.repository.ExpenseRepository;
 import com.splitwise.service.ExpenseService;
 import com.splitwise.service.GroupService;
@@ -42,6 +43,9 @@ public class ExpenseServiceImpl implements ExpenseService {
     @Autowired
     private GroupService groupService;
 
+    @Autowired
+    private CustomMapper customMapper;
+
 
 
     @Transactional
@@ -61,14 +65,8 @@ public class ExpenseServiceImpl implements ExpenseService {
         User payer = (User) userService.findUserById(expenseRequestDTO.getPayerId()).getData();
 
 
-
-        Expense expense = Expense.builder()
-                .payer(payer)
-                .expenseType(expenseRequestDTO.getExpenseType())
-                .category(expenseRequestDTO.getCategory())
-                .description(expenseRequestDTO.getDesc())
-                .amount(expenseRequestDTO.getAmount())
-                .build();
+        Expense expense = customMapper.map(expenseRequestDTO);
+        expense.setPayer(payer);
 
         List<Split> splits = splitService.createSplit(expense, expenseRequestDTO);
 
@@ -85,7 +83,7 @@ public class ExpenseServiceImpl implements ExpenseService {
 
         return ApiResponse.builder()
                 .success(true)
-                .data(expense)
+                .data(customMapper.map(expense))
                 .message("Expense is created")
                 .build();
     }
@@ -111,7 +109,7 @@ public class ExpenseServiceImpl implements ExpenseService {
         return ApiResponse.builder()
                 .message("Expense Created")
                 .success(true)
-                .data(expense)
+                .data(customMapper.map(expense))
                 .build();
 
     }
@@ -121,7 +119,7 @@ public class ExpenseServiceImpl implements ExpenseService {
         List<Expense> expenses = expenseRepository.findAll();
 
         return ApiResponse.builder()
-                .data(expenses)
+                .data(customMapper.map(expenses))
                 .message("All expense")
                 .success(true)
                 .build();

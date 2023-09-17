@@ -8,6 +8,7 @@ import com.splitwise.entity.User;
 import com.splitwise.exception.CreatorAndDeletedAreSameException;
 import com.splitwise.exception.GroupNotFoundException;
 import com.splitwise.exception.UserIsAlreadyExistsInGroupException;
+import com.splitwise.mapper.CustomMapper;
 import com.splitwise.repository.GroupRepository;
 import com.splitwise.service.GroupService;
 import com.splitwise.service.UserService;
@@ -25,6 +26,9 @@ public class GroupServiceImpl implements GroupService {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private CustomMapper customMapper;
 
     @Override
     public ApiResponse<Object> createGroup(GroupRequestDto groupRequestDto) {
@@ -127,7 +131,7 @@ public class GroupServiceImpl implements GroupService {
         return ApiResponse.builder()
                 .message("List of Group Members of group " + group.getName())
                 .success(true)
-                .data(group.getUsers())
+                .data(customMapper.mapToUserDto(group.getUsers().stream().toList()))
                 .build();
     }
 
@@ -145,7 +149,7 @@ public class GroupServiceImpl implements GroupService {
         return ApiResponse.builder()
                 .success(true)
                 .message("List of expenses")
-                .data(expenses)
+                .data(customMapper.map(expenses))
                 .build();
     }
 

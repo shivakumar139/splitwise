@@ -6,6 +6,7 @@ import com.splitwise.entity.Expense;
 import com.splitwise.entity.Group;
 import com.splitwise.entity.Split;
 import com.splitwise.entity.User;
+import com.splitwise.enums.ExpenseType;
 import com.splitwise.enums.ParticipantType;
 import com.splitwise.factory.AmountSplitterFactory;
 import com.splitwise.repository.SplitRepository;
@@ -67,8 +68,8 @@ public class SplitServiceImpl implements SplitService {
             Set<User> users = group.getUsers();
             List<String> ids = users.stream().map(User::getId).toList();
 
-            // get amountSplitter based on expense type
-            AmountSplitter amountSplitter = amountSplitterFactory.getObject(expenseRequestDTO.getExpenseType());
+            // get equal amountSplitter because money is equally divided between group users
+            AmountSplitter amountSplitter = amountSplitterFactory.getObject(ExpenseType.EQUAL);
 
 
             Participants participants = Participants.builder()

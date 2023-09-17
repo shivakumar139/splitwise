@@ -16,13 +16,13 @@ public class Debt {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "fk_payer_id")
-    private User payerId;
+    private User payer;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "fk_payee_id")
-    private User payeeId;
+    private User payee;
 
     @NotEmpty(message = "Amount is missing")
     private Double amount;

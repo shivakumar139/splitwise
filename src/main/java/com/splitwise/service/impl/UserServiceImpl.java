@@ -3,6 +3,7 @@ package com.splitwise.service.impl;
 import com.splitwise.dto.response.ApiResponse;
 import com.splitwise.entity.User;
 import com.splitwise.exception.UserNotFoundException;
+import com.splitwise.mapper.CustomMapper;
 import com.splitwise.repository.UserRepository;
 import com.splitwise.service.UserService;
 import com.sun.jdi.InternalException;
@@ -20,6 +21,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     UserRepository userRepository;
+
+    @Autowired
+    private CustomMapper customMapper;
 
     @Override
     public ApiResponse<Object> createUser(User user) {
@@ -53,7 +57,7 @@ public class UserServiceImpl implements UserService {
         }
 
         return ApiResponse.builder()
-                .data(users)
+                .data(customMapper.mapToUserDto(users))
                 .success(true)
                 .message("All users")
                 .build();
