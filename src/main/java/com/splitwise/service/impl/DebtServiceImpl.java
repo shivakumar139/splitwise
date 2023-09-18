@@ -1,6 +1,7 @@
 package com.splitwise.service.impl;
 
 import com.splitwise.dto.response.ApiResponse;
+import com.splitwise.dto.response.DebtResponseDTO;
 import com.splitwise.entity.Debt;
 import com.splitwise.entity.Expense;
 import com.splitwise.entity.Split;
@@ -12,7 +13,10 @@ import com.splitwise.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class DebtServiceImpl implements DebtService {
@@ -35,7 +39,9 @@ public class DebtServiceImpl implements DebtService {
         for(Split split: splits) {
             User payee = split.getUser();
 
-            if(payee.equals(payer)) continue;
+            if(payee.getId().equals(payer.getId())) {
+                continue;
+            }
 
             // payer -> payee , payee -> payer not exists simply save the debt because it's a fresh record
             if(!debtRepository.existsByPayerAndPayee(payer, payee) && !debtRepository.existsByPayerAndPayee(payee, payer)){
@@ -104,8 +110,42 @@ public class DebtServiceImpl implements DebtService {
     @Override
     public ApiResponse<Object> getDebtById(String userId) {
         User user = (User) userService.findUserById(userId).getData();
-        List<Debt> debts = debtRepository.findByPayerOrPayee(user);
-        if(debts.isEmpty()){
+        List<Debt> debts = debtRepository.findByPayer(user);
+
+
+        Map<String, Object> map = new LinkedHashMap<>();
+
+        if(!debts.isEmpty()){
+            List<DebtResponseDTO> payee = debts.stream()
+                    .map(debt ->
+                            DebtResponseDTO.builder()
+                                    .user(customMapper.map(debt.getPayee()))
+                                    .amount(debt.getAmount())
+                                    .build())
+                    .toList();
+
+            // current user paid to users
+            map.put("Payer", user.getName());
+            map.put("Payee", payee);
+        }
+
+
+        // all users paid to current users
+        debts = debtRepository.findByPayee(user);
+
+        if(!debts.isEmpty()) {
+
+            List<DebtResponseDTO> payers = debts.stream()
+                    .map(debt ->
+                            DebtResponseDTO.builder()
+                                    .user(customMapper.map(debt.getPayer()))
+                                    .amount(debt.getAmount())
+                                    .build())
+                    .toList();
+            map.put("Payers", payers);
+        }
+
+        if(map.isEmpty()){
             return ApiResponse.builder()
                     .success(true)
                     .message("Not have any Debts")
@@ -114,7 +154,7 @@ public class DebtServiceImpl implements DebtService {
         return ApiResponse.builder()
                 .success(true)
                 .message("List of debts")
-                .data(customMapper.mapToDebtDtoList(debts))
+                .data(map)
                 .build();
     }
 }

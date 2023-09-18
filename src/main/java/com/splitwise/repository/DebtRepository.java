@@ -18,4 +18,7 @@ public interface DebtRepository extends JpaRepository<Debt, String> {
     @Query("SELECT d FROM Debt d WHERE d.payer = :user OR d.payee = :user")
     List<Debt> findByPayerOrPayee(User user);
 
+    List<Debt> findByPayer(User user);
+    List<Debt> findByPayee(User user);
+
 }

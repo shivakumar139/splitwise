@@ -39,10 +39,4 @@ public interface CustomMapper {
     GroupExpenseResponseDTO map(Group group);
 
 
-    // debts
-    DebtResponseDTO map(Debt debt);
-
-    List<DebtResponseDTO> mapToDebtDtoList(List<Debt> debts);
-
-
 }
