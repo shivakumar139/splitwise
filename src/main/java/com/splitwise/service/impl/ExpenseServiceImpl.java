@@ -13,10 +13,7 @@ import com.splitwise.exception.InvalidExpenseException;
 import com.splitwise.factory.ExpenseValidatorFactory;
 import com.splitwise.mapper.CustomMapper;
 import com.splitwise.repository.ExpenseRepository;
-import com.splitwise.service.ExpenseService;
-import com.splitwise.service.GroupService;
-import com.splitwise.service.SplitService;
-import com.splitwise.service.UserService;
+import com.splitwise.service.*;
 import com.splitwise.validator.expense.ExpenseValidator;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +42,9 @@ public class ExpenseServiceImpl implements ExpenseService {
 
     @Autowired
     private CustomMapper customMapper;
+
+    @Autowired
+    private DebtService debtService;
 
 
 
@@ -78,8 +78,13 @@ public class ExpenseServiceImpl implements ExpenseService {
             expense.setGroups(groups);
         }
 
+        // update the debts of all users
+        debtService.addDebts(expense);
 
         expense = expenseRepository.save(expense);
+
+
+
 
         return ApiResponse.builder()
                 .success(true)

@@ -9,10 +9,7 @@ import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -24,6 +21,7 @@ import java.util.UUID;
 @Data
 @Table(name = "expense")
 @Builder
+@ToString
 
 @JsonIdentityInfo(
         generator = ObjectIdGenerators.PropertyGenerator.class,
@@ -65,12 +63,14 @@ public class Expense {
             fetch = FetchType.LAZY,
             cascade = CascadeType.PERSIST
     )
+    @ToString.Exclude
     private List<Group> groups;
 
     @OneToMany(
             mappedBy = "expense",
             cascade = CascadeType.PERSIST
     )
+    @ToString.Exclude
     private List<Split> splits;
 
     @PrePersist

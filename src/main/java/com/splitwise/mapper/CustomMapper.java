@@ -2,14 +2,8 @@ package com.splitwise.mapper;
 
 
 import com.splitwise.dto.request.expense.ExpenseRequestDTO;
-import com.splitwise.dto.response.ExpenseResponseDTO;
-import com.splitwise.dto.response.GroupExpenseResponseDTO;
-import com.splitwise.dto.response.SplitResponseDTO;
-import com.splitwise.dto.response.UserResponseDto;
-import com.splitwise.entity.Expense;
-import com.splitwise.entity.Group;
-import com.splitwise.entity.Split;
-import com.splitwise.entity.User;
+import com.splitwise.dto.response.*;
+import com.splitwise.entity.*;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -43,6 +37,12 @@ public interface CustomMapper {
 
     Group map(GroupExpenseResponseDTO groupExpenseResponseDTO);
     GroupExpenseResponseDTO map(Group group);
+
+
+    // debts
+    DebtResponseDTO map(Debt debt);
+
+    List<DebtResponseDTO> mapToDebtDtoList(List<Debt> debts);
 
 
 }

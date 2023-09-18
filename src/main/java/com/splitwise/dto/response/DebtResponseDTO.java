@@ -6,13 +6,12 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-public class UserResponseDto {
-
-    private String id;
-    private String name;
-    private String email;
+@Data
+public class DebtResponseDTO {
+    private UserResponseDto payer;
+    private UserResponseDto payee;
+    private Double amount;
 }
