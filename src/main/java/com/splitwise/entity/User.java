@@ -1,14 +1,12 @@
 package com.splitwise.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-
-import java.util.UUID;
 
 @Entity
 @Table(name = "user")
@@ -17,6 +15,8 @@ import java.util.UUID;
 @NoArgsConstructor
 
 public class User {
+
+
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
@@ -34,10 +34,8 @@ public class User {
     private String mobile;
 
 
-
     @NotEmpty(message = "password is missing")
     @Size(min = 7, max = 30, message = "Password length should in between 7 to 30")
     private String password;
-
 
 }

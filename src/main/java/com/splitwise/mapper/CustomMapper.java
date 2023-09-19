@@ -39,4 +39,10 @@ public interface CustomMapper {
     GroupExpenseResponseDTO map(Group group);
 
 
+
+    // wallet
+
+    WalletResponseDTO map(Wallet wallet);
+
+
 }

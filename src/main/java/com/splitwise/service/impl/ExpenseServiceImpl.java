@@ -46,6 +46,9 @@ public class ExpenseServiceImpl implements ExpenseService {
     @Autowired
     private DebtService debtService;
 
+    @Autowired
+    private WalletService walletService;
+
 
 
     @Transactional
@@ -78,10 +81,16 @@ public class ExpenseServiceImpl implements ExpenseService {
             expense.setGroups(groups);
         }
 
+
+
+        // update wallet of all users
+        walletService.createOrUpdateWallet(expense);
+
         // update the debts of all users
         debtService.addDebts(expense);
 
         expense = expenseRepository.save(expense);
+
 
 
 

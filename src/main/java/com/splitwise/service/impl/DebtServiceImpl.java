@@ -13,7 +13,6 @@ import com.splitwise.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -156,5 +155,15 @@ public class DebtServiceImpl implements DebtService {
                 .message("List of debts")
                 .data(map)
                 .build();
+    }
+
+    @Override
+    public boolean existsByPayerAndPayee(User payer, User payee) {
+        return debtRepository.existsByPayerAndPayee(payer, payee);
+    }
+
+    @Override
+    public Debt findByPayerAndPayee(User payer, User payee) {
+        return debtRepository.findByPayerAndPayee(payer, payee);
     }
 }

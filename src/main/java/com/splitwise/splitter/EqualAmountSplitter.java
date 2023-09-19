@@ -36,7 +36,6 @@ public class EqualAmountSplitter implements AmountSplitter{
         double remain = totalAmount - (perShareAmount * totalUsers);
         remain = Math.round(remain * 100.00)/100.0;
 
-        System.out.println("perShareAmount " + perShareAmount + " remain " + remain);
 
         List<OwedDetails> owedDetails = new ArrayList<>();
 
