@@ -57,7 +57,7 @@ public class DebtServiceImpl implements DebtService {
                 // if payee -> payer not exists means payee not owes any money to payer simply
                 // get prev debt and add the amount
 
-                Debt prevDebt = debtRepository.findByPayerAndPayee(payer, payee);
+                Debt prevDebt = debtRepository.findByPayerAndPayee(payer, payee).orElseThrow();
 
                 double newAmount = prevDebt.getAmount() + split.getAmount();
 
@@ -71,7 +71,7 @@ public class DebtServiceImpl implements DebtService {
             } else{
                 // means payee -> payer exists , payee owes payer
                 // get the (payee -> payer) calculate new amount
-                Debt prevDebt = debtRepository.findByPayerAndPayee(payee, payer);
+                Debt prevDebt = debtRepository.findByPayerAndPayee(payee, payer).orElseThrow();
                 double newAmount =  split.getAmount() - prevDebt.getAmount();
                 newAmount = Math.round(newAmount * 100.00)/100.0;
                 // if new amount is positive
@@ -164,6 +164,6 @@ public class DebtServiceImpl implements DebtService {
 
     @Override
     public Debt findByPayerAndPayee(User payer, User payee) {
-        return debtRepository.findByPayerAndPayee(payer, payee);
+        return debtRepository.findByPayerAndPayee(payer, payee).orElseThrow();
     }
 }

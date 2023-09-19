@@ -9,6 +9,7 @@ import com.splitwise.service.UserService;
 import com.sun.jdi.InternalException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,7 +17,7 @@ import java.util.Map;
 import java.util.UUID;
 
 
-@Service("userService")
+@Service
 public class UserServiceImpl implements UserService {
 
     @Autowired
@@ -26,19 +27,8 @@ public class UserServiceImpl implements UserService {
     private CustomMapper customMapper;
 
     @Override
-    public ApiResponse<Object> createUser(User user) {
-        User savedUser;
-        try {
-            savedUser = userRepository.save(user);
-        }catch (DataIntegrityViolationException ex){
-            throw new DataIntegrityViolationException("User with this email already exists");
-        }
-
-        return ApiResponse.builder()
-                .message("User is created")
-                .success(true)
-                .data(Map.of("UserId", savedUser.getId()))
-                .build();
+    public User createUser(User user) {
+        return userRepository.save(user);
     }
 
     @Override
@@ -72,6 +62,11 @@ public class UserServiceImpl implements UserService {
                 .message("User with id" + user.getId())
                 .build();
 
+    }
+
+    @Override
+    public UserDetails findByEmail(String email) {
+        return userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
     }
 
 

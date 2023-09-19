@@ -21,12 +21,6 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-
-    @PostMapping()
-    public ResponseEntity<ApiResponse<Object>> createUser(@Valid @RequestBody User user){
-        return new ResponseEntity<>(userService.createUser(user), HttpStatus.CREATED);
-    }
-
     @GetMapping()
     public ResponseEntity<ApiResponse<Object>> getAllUsers(){
         return new ResponseEntity<>(userService.getAllUsers(), HttpStatus.OK);

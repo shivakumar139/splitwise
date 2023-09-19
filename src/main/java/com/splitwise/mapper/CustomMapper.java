@@ -1,6 +1,7 @@
 package com.splitwise.mapper;
 
 
+import com.splitwise.dto.request.RegisterRequestDTO;
 import com.splitwise.dto.request.expense.ExpenseRequestDTO;
 import com.splitwise.dto.response.*;
 import com.splitwise.entity.*;
@@ -43,6 +44,9 @@ public interface CustomMapper {
     // wallet
 
     WalletResponseDTO map(Wallet wallet);
+
+
+    User map(RegisterRequestDTO registerRequestDTO);
 
 
 }

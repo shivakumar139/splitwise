@@ -7,11 +7,12 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface DebtRepository extends JpaRepository<Debt, String> {
 
-    Debt findByPayerAndPayee(User payer, User payee);
+    Optional<Debt> findByPayerAndPayee(User payer, User payee);
     boolean existsByPayerAndPayee(User payer, User payee);
     void deleteByPayerAndPayee(User payer, User payee);
 
