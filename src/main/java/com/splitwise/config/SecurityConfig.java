@@ -16,6 +16,21 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 public class SecurityConfig {
 
+    private final String[] PUBLIC_URLS = {
+            "/api/v1/auth/**",
+            "/v2/api-docs",
+            "/v3/api-docs",
+            "/v3/api-docs/**",
+            "/swagger-resources",
+            "/swagger-resources/**",
+            "/configuration/ui",
+            "/configuration/security",
+            "/swagger-ui/**",
+            "/swagger-ui.html",
+            "/webjars/**"
+
+    };
+
     @Autowired
     private AuthenticationProvider authenticationProvider;
 
@@ -27,7 +42,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception{
         httpSecurity
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("api/v1/auth/**")
+                        .requestMatchers(PUBLIC_URLS)
                         .permitAll()
                         .anyRequest()
                         .authenticated()
