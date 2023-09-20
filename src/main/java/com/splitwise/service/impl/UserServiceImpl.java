@@ -69,5 +69,11 @@ public class UserServiceImpl implements UserService {
         return userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
     }
 
+    @Override
+    public User findByVerificationCode(String verificationCode) {
+       return userRepository.findByVerificationCode(verificationCode).orElseThrow(UserNotFoundException::new);
+
+    }
+
 
 }

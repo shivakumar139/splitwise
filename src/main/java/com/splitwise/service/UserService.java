@@ -15,4 +15,6 @@ public interface UserService {
     ApiResponse<Object> findUserById(String id);
 
     UserDetails findByEmail(String username);
+
+    User findByVerificationCode(String verificationCode);
 }

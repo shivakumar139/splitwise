@@ -7,8 +7,10 @@ import com.splitwise.entity.User;
 import com.splitwise.mapper.CustomMapper;
 import com.splitwise.service.AuthService;
 import com.splitwise.service.JwtService;
+import com.splitwise.service.MailService;
 import com.splitwise.service.UserService;
 import com.sun.jdi.InternalException;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -39,18 +41,17 @@ public class AuthServiceImpl implements AuthService {
     @Autowired
     private JwtService jwtService;
 
+    @Autowired
+    private MailService mailService;
+
     @Override
     public ApiResponse<Object> login(LoginRequestDTO loginRequestDTO) {
-        try {
-            Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(loginRequestDTO.getEmail(), loginRequestDTO.getPassword())
-            );
 
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(loginRequestDTO.getEmail(), loginRequestDTO.getPassword())
+        );
 
-        }catch (Exception e){
-            throw new InternalException("Internal Server Error");
-        }
+        SecurityContextHolder.getContext().setAuthentication(authentication);
 
         UserDetails userDetails = userService.findByEmail(loginRequestDTO.getEmail());
         String jwtToken = jwtService.createToken(userDetails, new HashMap<>());
@@ -70,10 +71,29 @@ public class AuthServiceImpl implements AuthService {
 
         User savedUser = userService.createUser(user);
 
+        mailService.sendMail(savedUser);
+
+
         return ApiResponse.builder()
                 .message("User is registered")
                 .success(true)
                 .data(Map.of("UserId", savedUser.getId()))
                 .build();
     }
+
+    @Transactional
+    @Override
+    public ApiResponse<Object> verifyEmail(String verificationCode) {
+        User user = userService.findByVerificationCode(verificationCode);
+
+        user.setVerificationCode(null);
+        user.setEnabled(true);
+
+        return ApiResponse.builder()
+                .success(true)
+                .message("Email is verified")
+                .build();
+    }
+
+
 }

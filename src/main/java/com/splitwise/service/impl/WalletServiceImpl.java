@@ -2,9 +2,7 @@ package com.splitwise.service.impl;
 
 import com.splitwise.dto.response.ApiResponse;
 import com.splitwise.entity.*;
-import com.splitwise.exception.WalletNotFoundException;
 import com.splitwise.mapper.CustomMapper;
-import com.splitwise.repository.DebtRepository;
 import com.splitwise.repository.WalletRepository;
 import com.splitwise.service.DebtService;
 import com.splitwise.service.WalletService;
@@ -50,8 +48,6 @@ public class WalletServiceImpl implements WalletService {
 
             if(!debtService.existsByPayerAndPayee(payee, payer)){
 
-                Debt payeePayerDebt = debtService.findByPayerAndPayee(payee, payer);
-                System.out.println(payeePayerDebt);
                 // means payee not own any money to payer
                 // now payer own money and payee is payable
                 Wallet payerWallet = walletRepository.findByUserId(payer.getId());
