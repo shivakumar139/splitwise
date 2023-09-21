@@ -9,7 +9,6 @@ import com.splitwise.service.AuthService;
 import com.splitwise.service.JwtService;
 import com.splitwise.service.MailService;
 import com.splitwise.service.UserService;
-import com.sun.jdi.InternalException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -62,6 +61,7 @@ public class AuthServiceImpl implements AuthService {
                 .data(Map.of("Token", jwtToken))
                 .build();
     }
+
 
     @Override
     public ApiResponse<Object> register(RegisterRequestDTO registerRequestDTO) {

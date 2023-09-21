@@ -7,6 +7,7 @@ import com.splitwise.mapper.CustomMapper;
 import com.splitwise.repository.UserRepository;
 import com.splitwise.service.UserService;
 import com.sun.jdi.InternalException;
+import org.hibernate.boot.beanvalidation.IntegrationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -28,7 +29,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User createUser(User user) {
-        return userRepository.save(user);
+        User savedUser;
+        try{
+            savedUser = userRepository.save(user);
+        }catch (Exception e){
+            throw new IntegrationException("User is already exists with gmail " + user.getEmail() );
+        }
+        return savedUser;
     }
 
     @Override
