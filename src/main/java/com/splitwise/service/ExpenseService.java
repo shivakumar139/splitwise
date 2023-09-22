@@ -6,6 +6,6 @@ import com.splitwise.dto.response.ApiResponse;
 
 public interface ExpenseService {
     ApiResponse<Object> createExpense(ExpenseRequestDTO expenseRequestDTO);
-    ApiResponse<Object> getAllExpense();
+    ApiResponse<Object> getAllExpenseByUserId(String userId, int pageSize, int pageNumber);
 
 }

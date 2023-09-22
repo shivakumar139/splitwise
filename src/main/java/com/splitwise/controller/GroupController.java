@@ -8,6 +8,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -29,6 +30,7 @@ public class GroupController {
 
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("/{groupId}")
     public ResponseEntity<ApiResponse<Object>> deleteGroup(@PathVariable String groupId){
         return new ResponseEntity<>(groupService.deleteGroup(groupId), HttpStatus.OK);
@@ -41,6 +43,7 @@ public class GroupController {
     }
 
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("/{groupId}/{userId}")
     public ResponseEntity<ApiResponse<Object>> removeUserFromGroup(@PathVariable("groupId") String groupId, @PathVariable("userId") String userId){
         return new ResponseEntity<>(groupService.removeUserFromGroup(groupId, userId), HttpStatus.OK);

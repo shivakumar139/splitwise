@@ -4,6 +4,7 @@ import com.splitwise.dto.request.LoginRequestDTO;
 import com.splitwise.dto.request.RegisterRequestDTO;
 import com.splitwise.dto.response.ApiResponse;
 import com.splitwise.entity.User;
+import com.splitwise.enums.Role;
 import com.splitwise.mapper.CustomMapper;
 import com.splitwise.service.AuthService;
 import com.splitwise.service.JwtService;
@@ -43,12 +44,14 @@ public class AuthServiceImpl implements AuthService {
     @Autowired
     private MailService mailService;
 
+
+
     @Override
     public ApiResponse<Object> login(LoginRequestDTO loginRequestDTO) {
 
+
         Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginRequestDTO.getEmail(), loginRequestDTO.getPassword())
-        );
+                new UsernamePasswordAuthenticationToken(loginRequestDTO.getEmail(), loginRequestDTO.getPassword()));
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
@@ -68,6 +71,7 @@ public class AuthServiceImpl implements AuthService {
         User user = customMapper.map(registerRequestDTO);
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setRole(Role.ROLE_USER);
 
         User savedUser = userService.createUser(user);
 

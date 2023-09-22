@@ -16,6 +16,7 @@ public interface CustomMapper {
 
 
     UserResponseDto map(User user);
+
     User map(UserResponseDto userResponseDto);
 
     List<ExpenseResponseDTO> map(List<Expense> expenses);

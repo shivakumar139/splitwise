@@ -5,6 +5,7 @@ import com.splitwise.dto.response.ApiResponse;
 import com.splitwise.entity.Expense;
 import com.splitwise.entity.Group;
 import com.splitwise.entity.User;
+import com.splitwise.enums.Role;
 import com.splitwise.exception.CreatorAndDeletedAreSameException;
 import com.splitwise.exception.GroupNotFoundException;
 import com.splitwise.exception.UserIsAlreadyExistsInGroupException;
@@ -12,6 +13,7 @@ import com.splitwise.mapper.CustomMapper;
 import com.splitwise.repository.GroupRepository;
 import com.splitwise.service.GroupService;
 import com.splitwise.service.UserService;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,9 +32,12 @@ public class GroupServiceImpl implements GroupService {
     @Autowired
     private CustomMapper customMapper;
 
+    @Transactional
     @Override
     public ApiResponse<Object> createGroup(GroupRequestDto groupRequestDto) {
         User createdUser = (User)userService.findUserById(groupRequestDto.getCreatedBy()).getData();
+
+        createdUser.setRole(Role.ROLE_ADMIN);
 
         String desc = groupRequestDto.getDescription();
 

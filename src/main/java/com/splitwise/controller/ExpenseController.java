@@ -31,10 +31,10 @@ public class ExpenseController {
     }
 
 
-    @GetMapping
-    public ResponseEntity<ApiResponse<Object>> getAllExpense(){
+    @GetMapping("{userId}")
+    public ResponseEntity<ApiResponse<Object>> getAllExpenseByUserId(@PathVariable String userId, @RequestParam(value = "pageSize", defaultValue = "10") int pageSize, @RequestParam(value = "pageNumber", defaultValue = "0") int pageNumber){
 
-        return new ResponseEntity<>(expenseService.getAllExpense(), HttpStatus.CREATED);
+        return new ResponseEntity<>(expenseService.getAllExpenseByUserId(userId, pageSize, pageNumber), HttpStatus.CREATED);
     }
 
 }

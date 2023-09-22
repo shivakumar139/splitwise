@@ -17,6 +17,9 @@ import com.splitwise.service.*;
 import com.splitwise.validator.expense.ExpenseValidator;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -58,7 +61,7 @@ public class ExpenseServiceImpl implements ExpenseService {
         if(expenseRequestDTO.getExpenseType() == ExpenseType.INDIVIDUAL){
             return createIndividualExpense(expenseRequestDTO);
         }
-        ExpenseValidator expenseValidator = expenseValidatorFactory.getObject(expenseRequestDTO.getExpenseType());
+        ExpenseValidator expenseValidator = expenseValidatorFactory.getInstance(expenseRequestDTO.getExpenseType());
 
         if(!expenseValidator.validate(expenseRequestDTO)){
             throw new InvalidExpenseException("Invalid Expense");
@@ -129,8 +132,9 @@ public class ExpenseServiceImpl implements ExpenseService {
     }
 
     @Override
-    public ApiResponse<Object> getAllExpense() {
-        List<Expense> expenses = expenseRepository.findAll();
+    public ApiResponse<Object> getAllExpenseByUserId(String userId, int pageSize, int pageNumber) {
+        Pageable sortByDate = PageRequest.of(pageNumber, pageSize, Sort.by("createdAt").descending());
+        List<Expense> expenses = expenseRepository.findAllByPayerId(userId, sortByDate);
 
         return ApiResponse.builder()
                 .data(customMapper.map(expenses))

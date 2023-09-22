@@ -30,4 +30,6 @@ spring:
           starttls:
             enable: true
 
+
   #  **************** Email Configuration End *******************
+

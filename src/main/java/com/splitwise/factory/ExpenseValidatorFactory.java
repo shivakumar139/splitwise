@@ -26,7 +26,7 @@ public class ExpenseValidatorFactory {
     @Autowired
     private EqualExpenseValidator equalExpenseValidator;
 
-    public ExpenseValidator getObject(ExpenseType expenseType){
+    public ExpenseValidator getInstance(ExpenseType expenseType){
 
 
         switch (expenseType){
