@@ -1,20 +1,18 @@
 package com.splitwise.entity;
 
 
-import com.splitwise.enums.Role;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 
 @Entity
@@ -23,7 +21,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-
+@Slf4j
 public class User implements UserDetails {
 
 
@@ -51,12 +49,29 @@ public class User implements UserDetails {
     private String verificationCode;
     private boolean enabled = false;
 
-    @Enumerated(EnumType.STRING)
-    private Role role;
+
+    @ManyToMany(
+            fetch = FetchType.EAGER,
+            cascade = CascadeType.ALL
+    )
+    @JoinTable(
+            name = "users_roles",
+            joinColumns = @JoinColumn(name = "fk_user_id"),
+            inverseJoinColumns = @JoinColumn(name = "fk_role_id")
+
+    )
+    private Set<Roles> roles;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(role.name()));
+        List<SimpleGrantedAuthority> authorities = new ArrayList<>();
+
+        for(Roles role: roles){
+            authorities.add(new SimpleGrantedAuthority(role.getRole()));
+        }
+
+        log.info(authorities.toString());
+        return authorities;
     }
 
     @Override

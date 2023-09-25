@@ -9,6 +9,7 @@ import com.splitwise.entity.Split;
 import com.splitwise.entity.User;
 import com.splitwise.enums.ExpenseType;
 import com.splitwise.enums.ParticipantType;
+import com.splitwise.enums.RoleEnum;
 import com.splitwise.exception.InvalidExpenseException;
 import com.splitwise.factory.ExpenseValidatorFactory;
 import com.splitwise.mapper.CustomMapper;
@@ -20,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -52,6 +54,9 @@ public class ExpenseServiceImpl implements ExpenseService {
     @Autowired
     private WalletService walletService;
 
+    @Autowired
+    private RoleService roleService;
+
 
 
     @Transactional
@@ -67,6 +72,9 @@ public class ExpenseServiceImpl implements ExpenseService {
             throw new InvalidExpenseException("Invalid Expense");
 
         }
+
+        // has permission to add expense in the group or not
+        if(expenseRequestDTO.getParticipants().getType() == ParticipantType.GROUPS && !hasPermission(expenseRequestDTO)) throw new AccessDeniedException("Access Denied to add expense in this group");
 
         User payer = (User) userService.findUserById(expenseRequestDTO.getPayerId()).getData();
 
@@ -105,6 +113,18 @@ public class ExpenseServiceImpl implements ExpenseService {
                 .build();
     }
 
+    private boolean hasPermission(ExpenseRequestDTO expenseRequestDTO) {
+        List<String> groupIds = expenseRequestDTO.getParticipants().getIds();
+
+        for (String groupId: groupIds){
+            if(!roleService.hasPermission(RoleEnum.ROLE_GROUP_USER.withObjectId(groupId))){
+                return false;
+            }
+        }
+
+        return true;
+
+    }
 
 
 

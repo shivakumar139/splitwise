@@ -4,23 +4,30 @@ import com.splitwise.dto.request.GroupRequestDto;
 import com.splitwise.dto.response.ApiResponse;
 import com.splitwise.entity.Expense;
 import com.splitwise.entity.Group;
+import com.splitwise.entity.Roles;
 import com.splitwise.entity.User;
-import com.splitwise.enums.Role;
+import com.splitwise.enums.RoleEnum;
 import com.splitwise.exception.CreatorAndDeletedAreSameException;
 import com.splitwise.exception.GroupNotFoundException;
 import com.splitwise.exception.UserIsAlreadyExistsInGroupException;
 import com.splitwise.mapper.CustomMapper;
 import com.splitwise.repository.GroupRepository;
 import com.splitwise.service.GroupService;
+import com.splitwise.service.RoleService;
 import com.splitwise.service.UserService;
+import com.sun.jdi.InternalException;
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
+@Transactional
 @Service
+@Slf4j
 public class GroupServiceImpl implements GroupService {
 
     @Autowired
@@ -32,12 +39,13 @@ public class GroupServiceImpl implements GroupService {
     @Autowired
     private CustomMapper customMapper;
 
-    @Transactional
+    @Autowired
+    private RoleService roleService;
+
     @Override
     public ApiResponse<Object> createGroup(GroupRequestDto groupRequestDto) {
         User createdUser = (User)userService.findUserById(groupRequestDto.getCreatedBy()).getData();
 
-        createdUser.setRole(Role.ROLE_ADMIN);
 
         String desc = groupRequestDto.getDescription();
 
@@ -51,6 +59,10 @@ public class GroupServiceImpl implements GroupService {
 
         createdGroup = groupRepository.save(createdGroup);
 
+        createdUser.getRoles().addAll(roleService.createRole(RoleEnum.ROLE_GROUP_ADMIN, createdGroup.getId()));
+
+        log.info(createdUser.getRoles().toString());
+
         return ApiResponse.builder()
                 .message("Group is created")
                 .success(true)
@@ -60,13 +72,33 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     public ApiResponse<Object> deleteGroup(String groupId) {
-        groupRepository.deleteById(groupId);
+        try{
+
+            removeGroupPermissions(groupId);
+            groupRepository.deleteById(groupId);
+
+        } catch (Exception e){
+            throw new InternalException("Invalid group id " + groupId);
+        }
 
         return ApiResponse.builder()
                 .message("Group is deleted")
                 .success(true)
                 .data(Map.of("groupId", groupId))
                 .build();
+    }
+
+
+    /***
+     * removed the all roles and permissions of all users that are related to current group
+     * @param groupId group id
+     */
+    private void removeGroupPermissions(String groupId) {
+        Group group = groupRepository.findById(groupId).orElseThrow(GroupNotFoundException::new);
+
+        roleService.removeRole(group.getCreatedBy(), groupId);
+        group.getUsers().forEach(user -> roleService.removeRole(user, groupId));
+
     }
 
     @Override
@@ -79,6 +111,9 @@ public class GroupServiceImpl implements GroupService {
         if(users.contains(user)){
             throw new UserIsAlreadyExistsInGroupException("user is already exists in the group " + group.getName());
         }
+
+        // add group permissions to the user
+        user.getRoles().addAll(roleService.createRole(RoleEnum.ROLE_GROUP_USER, groupId));
 
         // add new user
         users.add(user);
@@ -93,11 +128,13 @@ public class GroupServiceImpl implements GroupService {
                 .build();
     }
 
+
     @Override
     public ApiResponse<Object> removeUserFromGroup(String groupId, String userId) {
 
         Group group = groupRepository.findById(groupId).orElseThrow(GroupNotFoundException::new);
         User user = (User) userService.findUserById(userId).getData();
+
 
         // get prev users
         Set<User> users = group.getUsers();
@@ -110,8 +147,10 @@ public class GroupServiceImpl implements GroupService {
                     .build();
         }
 
-        // add remove user
+        //  remove user
         users.remove(user);
+
+        roleService.removeRole(user, groupId);
 
         //if removed user and created user is same first remove all users or delete group
         if(user.equals(group.getCreatedBy())){
@@ -119,6 +158,8 @@ public class GroupServiceImpl implements GroupService {
         }
 
         group.setUsers(users);
+
+
         groupRepository.save(group);
 
 

@@ -8,14 +8,17 @@ import com.splitwise.entity.Split;
 import com.splitwise.entity.User;
 import com.splitwise.enums.ExpenseType;
 import com.splitwise.enums.ParticipantType;
+import com.splitwise.enums.RoleEnum;
 import com.splitwise.factory.AmountSplitterFactory;
 import com.splitwise.repository.SplitRepository;
 import com.splitwise.service.GroupService;
+import com.splitwise.service.RoleService;
 import com.splitwise.service.SplitService;
 import com.splitwise.service.UserService;
 import com.splitwise.splitter.AmountSplitter;
 import com.splitwise.splitter.OwedDetails;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -37,6 +40,8 @@ public class SplitServiceImpl implements SplitService {
 
     @Autowired
     private GroupService groupService;
+
+
 
     @Override
     public List<Split> createSplit(Expense expense, ExpenseRequestDTO expenseRequestDTO) {
@@ -60,6 +65,9 @@ public class SplitServiceImpl implements SplitService {
     }
 
     private List<Split> splitWithGroups(Expense expense, List<OwedDetails> owedDetailsList, ExpenseRequestDTO expenseRequestDTO) {
+
+
+
 
         List<Split> splits = new ArrayList<>();
 
@@ -91,6 +99,7 @@ public class SplitServiceImpl implements SplitService {
         return splits;
 
     }
+
 
 
     private List<Split> splitWithUsers(Expense expense, List<OwedDetails> owedDetailsList ) {

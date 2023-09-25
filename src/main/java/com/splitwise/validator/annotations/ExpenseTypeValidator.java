@@ -4,7 +4,7 @@ import com.splitwise.dto.request.expense.ExpenseRequestDTO;
 import com.splitwise.enums.ExpenseType;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
-
+import org.springframework.security.core.Authentication;
 
 
 public class ExpenseTypeValidator implements ConstraintValidator<ValidExpenseType, ExpenseRequestDTO> {
@@ -33,6 +33,8 @@ public class ExpenseTypeValidator implements ConstraintValidator<ValidExpenseTyp
             }
             return true;
         }
+
+
 
 
 
