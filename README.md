@@ -1,4 +1,17 @@
 # Project: Splitwise 🔥
+
+ ## Database Design
+<p align="center">
+    <img width="606" alt="database design" src="https://github.com/shivakumar139/splitwise/assets/52816688/6c505121-c118-4daf-bef2-022e6aa97f81">
+</p>
+
+## Flow Chart
+<p align="center">
+    <img width="1029" alt="flow" src="https://github.com/shivakumar139/splitwise/assets/52816688/42e55bf6-f4ff-457d-9d5e-80e938d4c5f2">
+</p>
+
+
+
 # 📁 Collection: Expense 
 
 
