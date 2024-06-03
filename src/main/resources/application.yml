@@ -16,7 +16,7 @@ spring:
   main:
     allow-circular-references: true
 
-  #  **************** Email Configuration Start *********************
+  #  **************** Email Configuration Start **********************
 
   mail:
     host: smtp.gmail.com
