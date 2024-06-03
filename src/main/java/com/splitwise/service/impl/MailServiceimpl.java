@@ -18,6 +18,8 @@ public class MailServiceimpl implements MailService {
     private JavaMailSender mailSender;
 
     @Value("${spring.mail.username}") private String sender;
+    @Value("${spring.serverIP}")
+    private String serverIP;
 
 
     @Async
@@ -91,7 +93,7 @@ public class MailServiceimpl implements MailService {
                 "\n" +
                 "</html>";
 
-        String url = "http://localhost:8080/api/v1/auth/verify?code=" + verificationCode;
+        String url = "http://" + serverIP + ":8080/api/v1/auth/verify?code=" + verificationCode;
         mailTemplate = mailTemplate.replace("{{verificationLink}}",url);
         return mailTemplate;
     }
