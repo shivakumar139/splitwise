@@ -17,10 +17,21 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
           cache: maven
+
+      - name: Install Maven
+        run: sudo apt-get update && sudo apt-get install -y maven
+
       - name: Build with Maven
         run: mvn -B package --file pom.xml
+        env:
+          JAVA_HOME: /home/ubuntu/actions-runner/_work/_tool/Java_Temurin-Hotspot_jdk/17.0.11-9/x64
+          JAVA_HOME_17_X64: /home/ubuntu/actions-runner/_work/_tool/Java_Temurin-Hotspot_jdk/17.0.11-9/x64
+
       - name: Build with Maven (retry)
         run: mvn package --file pom.xml
+        env:
+          JAVA_HOME: /home/ubuntu/actions-runner/_work/_tool/Java_Temurin-Hotspot_jdk/17.0.11-9/x64
+          JAVA_HOME_17_X64: /home/ubuntu/actions-runner/_work/_tool/Java_Temurin-Hotspot_jdk/17.0.11-9/x64
 
       - name: Execute Jar file
         run: sudo kill -9 `sudo lsof -t -i:8080` & sudo java -jar /home/ubuntu/actions-runner/_work/splitwise/splitwise/target/splitwise-0.0.1-SNAPSHOT.jar &
